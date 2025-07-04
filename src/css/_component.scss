@@ -1,0 +1,18 @@
+$transitions: (
+  'fast'  : 0.3s,
+  'medium': 0.5s
+);
+
+@mixin flex-center {
+  display        : flex;
+  justify-content: center;
+  align-items    : center;
+}
+
+@mixin transition($property: all, $duration: map-get($transitions, 'fast'), $timing: ease-in-out) {
+  transition: $property $duration $timing;
+}
+
+@mixin box-shadow($x: 0, $y: 4px, $blur: 8px, $color: rgba(0, 0, 0, 0.1)) {
+  box-shadow: $x $y $blur $color;
+}
