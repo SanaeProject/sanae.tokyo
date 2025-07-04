@@ -1,0 +1,152 @@
+@use 'colors';
+@use 'component';
+@use 'fonts';
+
+$header-height          : 70px;
+$menu-item-blank        : 20px;
+$menu-max-height        : 1000px;
+$menu-icon-size         : 27px;
+$menu-icon-line-height  : 3px;
+$menu-icon-line-blank   : calc(($menu-icon-size - $menu-icon-line-height) / 2 - 5px);
+
+header{
+    position    : fixed;
+    top         : 0;
+    left        : 0;
+    width       : 100%;
+    height      : $header-height;
+    background  : map-get(colors.$colors, 'primary');
+    z-index     : 1000;
+
+    h1{
+        position  : absolute;
+        display   : inline-block;
+        margin    : auto calc($menu-icon-size + $menu-item-blank * 2);
+        top       : 50%;
+        transform : translateY(-50%);
+        color     : map-get(colors.$colors, 'header-text');
+    }
+
+    .menu{
+        position    : absolute;
+        top         : $header-height;
+        left        : 0;
+        width       : 100%;
+        max-height  : 0;
+        overflow    : hidden;
+        background  : map-get(colors.$colors, 'primary');
+        @include component.transition(max-height);
+        @include component.flex-center();
+
+        ul{
+            display         : flex;
+            padding         : 0;
+            margin          : 0;
+            list-style      : none;
+            flex-direction  : row;
+            flex-wrap       : wrap;
+            width           : 100%;
+
+            li{
+                position    : relative;
+                padding     : $menu-item-blank;
+                text-align  : center;
+                color       : map-get(colors.$colors, 'header-text');
+                font-size   : 1.2rem;
+
+                a{
+                    color          : inherit;
+                    text-decoration: none;
+
+                    &:hover{
+                        color: map-get(colors.$colors, 'link-hover');
+                    }
+                }
+            }
+        }
+    }
+
+    .menu-icon{
+        position  : absolute;
+        top       : 50%;
+        left      : $menu-item-blank;
+        transform : translateY(-50%);
+        cursor    : pointer;
+        
+        input[type="checkbox"]{
+            display: none;
+        }
+    }
+    .navicon{
+        display   : block;
+        width     : $menu-icon-size;
+        padding   : $menu-icon-size 0; // 当たり判定増加
+
+        background         : linear-gradient(to right, map-get(colors.$colors, 'menu-btn') 100%, transparent 100%);
+        background-size    : $menu-icon-size $menu-icon-line-height;
+        background-position: 0 50%;
+        background-repeat  : repeat-x;
+        
+        cursor    : pointer;
+
+        @include component.transition();
+
+        &:before,&:after{
+            content     : '';
+            position    : absolute;
+            top         : 50%;
+            width       : $menu-icon-size;
+            height      : $menu-icon-line-height;
+            background  : map-get(colors.$colors, 'menu-btn'); 
+            @include component.transition();
+        }
+        &:before{
+            transform: translateY(calc(-50% + $menu-icon-line-blank)) rotate(0deg);
+        }
+        &:after{
+            transform: translateY(calc(-50% - $menu-icon-line-blank)) rotate(0deg);
+        }
+    }
+    .menu-icon input[type="checkbox"]:checked ~ .navicon{
+        background          : linear-gradient(to right, map-get(colors.$colors, 'menu-btn') 0%, transparent 0%);
+        background-position : 50%;
+        transform           : rotate(360deg);
+        
+        &:before{
+            transform: translateY(-50%) rotate(45deg);
+        }
+        &:after{
+            transform: translateY(-50%) rotate(-45deg);
+        }
+    }
+    .menu-icon:has(input[type="checkbox"]:checked) ~ .menu{
+        max-height: $menu-max-height;
+    }
+}
+@keyframes header-hide{
+    from{
+        top: 0;
+    }
+    to{
+        top: -$header-height;
+    }
+}
+header.hide{
+    animation: header-hide 0.3s ease-in-out forwards;
+
+    .menu{
+        max-height: 0;
+    }
+}
+
+@keyframes header-show{
+    from{
+        top: -$header-height;
+    }
+    to{
+        top: 0;
+    }
+}
+header.show{
+    animation: header-show 0.3s ease-in-out forwards;
+}
