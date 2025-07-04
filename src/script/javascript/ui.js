@@ -72,6 +72,26 @@ function delayPrint(eleOrSel_1, text_1, interval_1) {
     });
 }
 /**
+ * A utility function to throttle the execution of a function.
+ * It ensures that the function is called at most once every specified delay.
+ *
+ * @param func  - The function to be throttled.
+ * @param delay - The time in milliseconds to wait before allowing the next call.
+ *
+ * @returns A throttled version of the provided function.
+ */
+let throttleTimeout = null;
+function throttle(func, delay) {
+    return function (...args) {
+        if (!throttleTimeout) {
+            func.apply(this, args);
+            throttleTimeout = setTimeout(() => {
+                throttleTimeout = null;
+            }, delay);
+        }
+    };
+}
+/**
  * Toggles the visibility of HTML elements based on their position in the viewport.
  *
  * @param elements       - An array of HTML elements to observe for visibility changes.
@@ -111,7 +131,7 @@ let lastScroll = scrollY;
  * from all elements and then adds the appropriate class based on scroll direction.
  */
 function toggleStyleOnScroll(elements, duration, className) {
-    document.addEventListener("scroll", () => {
+    document.addEventListener("scroll", throttle(() => {
         let nowScroll = window.scrollY;
         if (Math.abs(nowScroll - lastScroll) < duration)
             return;
@@ -127,7 +147,7 @@ function toggleStyleOnScroll(elements, duration, className) {
             elements.forEach(element => element.classList.add(className[1]));
         // update lastScroll
         lastScroll = nowScroll;
-    });
+    }, 100));
 }
 document.addEventListener("DOMContentLoaded", () => {
     const elements = Array.from(document.querySelectorAll(".slide-in"));

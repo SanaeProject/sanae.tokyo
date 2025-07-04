@@ -73,6 +73,26 @@ async function delayPrint(
     }, interval);
 }
 
+/**
+ * A utility function to throttle the execution of a function.
+ * It ensures that the function is called at most once every specified delay.
+ *
+ * @param func  - The function to be throttled.
+ * @param delay - The time in milliseconds to wait before allowing the next call.
+ *
+ * @returns A throttled version of the provided function.
+ */
+let throttleTimeout: ReturnType<typeof setTimeout> | null = null;
+function throttle<T extends (...args: any[]) => void>(func: T, delay: number) {
+    return function(this: any, ...args: Parameters<T>) {
+        if (!throttleTimeout) {
+            func.apply(this, args);
+            throttleTimeout = setTimeout(() => {
+                throttleTimeout = null;
+            }, delay);
+        }
+    };
+}
 
 /**
  * Toggles the visibility of HTML elements based on their position in the viewport.
@@ -125,7 +145,7 @@ function toggleStyleOnScroll(
     duration : number,
     className: [upClassName:string,downClassName:string]
 ){
-    document.addEventListener("scroll",()=>{
+    document.addEventListener("scroll",throttle(()=>{
         let nowScroll = window.scrollY;
 
         if(Math.abs(nowScroll - lastScroll) < duration)
@@ -145,7 +165,7 @@ function toggleStyleOnScroll(
 
         // update lastScroll
         lastScroll = nowScroll;
-    });
+    },100));
 }
 document.addEventListener("DOMContentLoaded", () => { 
     const elements = Array.from(document.querySelectorAll<HTMLElement>(".slide-in")); 
