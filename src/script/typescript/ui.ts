@@ -82,9 +82,9 @@ async function delayPrint(
  *
  * @returns A throttled version of the provided function.
  */
-let throttleTimeout: ReturnType<typeof setTimeout> | null = null;
 function throttle<T extends (...args: any[]) => void>(func: T, delay: number) {
     return function(this: any, ...args: Parameters<T>) {
+        let throttleTimeout: ReturnType<typeof setTimeout> | null = null;
         if (!throttleTimeout) {
             func.apply(this, args);
             throttleTimeout = setTimeout(() => {
