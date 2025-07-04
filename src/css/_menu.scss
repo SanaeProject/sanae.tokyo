@@ -24,17 +24,20 @@ header{
         margin    : auto calc($menu-icon-size + $menu-item-blank * 2);
         top       : 50%;
         transform : translateY(-50%);
+
+        width     : calc(100% - ($menu-icon-size + $menu-item-blank * 2) * 2);
+        
+        text-align: center;
         color     : map-get(colors.$colors, 'header-text');
     }
 
     .menu{
         position    : absolute;
         top         : $header-height;
-        left        : 0;
-        width       : 100%;
         max-height  : 0;
         overflow    : hidden;
         background  : map-get(colors.$colors, 'primary');
+        width       : 100%;
         @include component.transition(max-height);
         @include component.flex-center();
 
@@ -45,6 +48,7 @@ header{
             list-style      : none;
             flex-direction  : row;
             flex-wrap       : wrap;
+            justify-content : center;
             width           : 100%;
 
             li{
@@ -53,14 +57,22 @@ header{
                 text-align  : center;
                 color       : map-get(colors.$colors, 'header-text');
                 font-size   : 1.2rem;
+                overflow    : hidden;
 
                 a{
-                    color          : inherit;
-                    text-decoration: none;
+                    padding             : 0.5rem;
+                    color               : inherit;
+                    text-decoration     : none;
+                    background-size     : 200% 100%;
+                    background-position : right center;
+                    background-image    : linear-gradient(to left, transparent 51%, map-get(colors.$colors, 'accent') 50%);
+                    background-repeat   : no-repeat;
 
-                    &:hover{
-                        color: map-get(colors.$colors, 'link-hover');
-                    }
+                    @include component.transition();
+                }
+                a:hover{
+                    background-position: left center;
+                    color: map-get(colors.$colors, 'primary');
                 }
             }
         }

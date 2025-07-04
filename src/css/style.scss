@@ -38,7 +38,7 @@ h1 {
 }
 h2 {
   @include fonts.font-subtitle();
-  color      : map-get(colors.$colors, 'link');
+  color      : map-get(colors.$colors, 'h2-text');
 }
 h3 {
   &.toy {
