@@ -80,3 +80,92 @@ h3 {
     }
   }
 }
+
+a{
+    padding             : 0.5rem;
+    color               : inherit;
+    text-decoration     : underline;
+    background-size     : 200% 100%;
+    background-position : right center;
+    background-image    : linear-gradient(to left, transparent 51%, map-get(colors.$colors, 'primary') 50%);
+    background-repeat   : no-repeat;
+
+    @include component.transition();
+}
+a:hover{
+    background-position : left center;
+    color               : map-get(colors.$colors, 'accent');
+}
+
+$spacing: (
+  'small' : 5px,
+  'medium': 10px,
+  'large' : 20px,
+  'xlarge': 30px
+);
+
+// テーブルスタイル
+table {
+  &.common {
+    width          : 100%;
+    margin         : map-get($spacing, 'large') auto;
+    border-collapse: collapse;
+    @include component.box-shadow;
+
+    th {
+      background-color: map-get(colors.$colors, 'table-header');
+    }
+
+    th, td {
+      padding   : map-get(colors.$spacing, 'medium');
+      text-align: center;
+      border    : 1px solid map-get(colors.$colors, 'border');
+    }
+  }
+
+  &.horizontal {
+    width          : 100%;
+    max-width      : 767px;
+    margin         : map-get($spacing, 'large') auto;
+    border-collapse: collapse;
+    @include box-shadow;
+
+    tr {
+      border-bottom: solid 2px map-get(colors.$colors, 'text');
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+
+    th {
+      position        : relative;
+      text-align      : center;
+      width           : 30%;
+      background-color: map-get(colors.$colors, 'secondary');
+      color           : map-get(colors.$colors, 'text');
+      padding         : map-get(colors.$spacing, 'medium') 0;
+
+      &:after {
+        display      : block;
+        content      : "";
+        width        : 0;
+        height       : 0;
+        position     : absolute;
+        top          : calc(50% - 10px);
+        right        : -10px;
+        border-left  : 10px solid map-get(colors.$colors, 'secondary');
+        border-top   : 10px solid transparent;
+        border-bottom: 10px solid transparent;
+      }
+    }
+
+    td {
+      text-align      : left;
+      width           : 70%;
+      text-align      : center;
+      background-color: map-get(colors.$colors, 'table-row');
+      padding         : map-get(colors.$spacing, 'medium') 0;
+    }
+  }
+}

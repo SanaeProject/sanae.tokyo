@@ -10,6 +10,7 @@
   * Copyright 2024 SanaePRJ. All Rights Reserved.
 #################################################################################*/
 
+import { throttle } from "./util.js";
 
 let writingElements: Array<HTMLElement> = [];
 /**
@@ -32,7 +33,7 @@ let writingElements: Array<HTMLElement> = [];
  * delayPrint(element, 'Hello, World!', 100);
  * ```
  */
-async function delayPrint(
+export async function delayPrint(
     eleOrSel : HTMLElement | string,
     text     : string,
     interval : number,
@@ -74,27 +75,6 @@ async function delayPrint(
 }
 
 /**
- * A utility function to throttle the execution of a function.
- * It ensures that the function is called at most once every specified delay.
- *
- * @param func  - The function to be throttled.
- * @param delay - The time in milliseconds to wait before allowing the next call.
- *
- * @returns A throttled version of the provided function.
- */
-let throttleTimeout: ReturnType<typeof setTimeout> | null = null;
-function throttle<T extends (...args: any[]) => void>(func: T, delay: number) {
-    return function(this: any, ...args: Parameters<T>) {
-        if (!throttleTimeout) {
-            func.apply(this, args);
-            throttleTimeout = setTimeout(() => {
-                throttleTimeout = null;
-            }, delay);
-        }
-    };
-}
-
-/**
  * Toggles the visibility of HTML elements based on their position in the viewport.
  * 
  * @param elements       - An array of HTML elements to observe for visibility changes.
@@ -105,7 +85,7 @@ function throttle<T extends (...args: any[]) => void>(func: T, delay: number) {
  * 
  * @returns void
  */
-function toggleVisibilityOnScroll(
+export function toggleVisibilityOnScroll(
     elements      : HTMLElement[],
     visibleStyle  : (entry: IntersectionObserverEntry) => void,
     invisibleStyle: (entry: IntersectionObserverEntry) => void
@@ -140,7 +120,7 @@ let lastScroll = scrollY;
  * If the scroll distance exceeds the specified duration, it removes both classes
  * from all elements and then adds the appropriate class based on scroll direction.
  */
-function toggleStyleOnScroll(
+export function toggleStyleOnScroll(
     elements : HTMLElement[],
     duration : number,
     className: [upClassName:string,downClassName:string]
@@ -168,10 +148,15 @@ function toggleStyleOnScroll(
     },100));
 }
 document.addEventListener("DOMContentLoaded", () => { 
-    const elements = Array.from(document.querySelectorAll<HTMLElement>(".slide-in")); 
+    const elements = Array.from(document.querySelectorAll<HTMLElement>("section")); 
     toggleVisibilityOnScroll( elements, (entry) => {
-            entry.target.classList.add("slide-in-visible");
-        }, (entry) => {} 
+            if(!entry.target.classList.contains("visited"))
+                entry.target.classList.add("visited");
+            
+            entry.target.classList.add("visible");
+        }, (entry) => {
+            entry.target.classList.remove("visible");
+        }
     ); 
 });
 
@@ -198,7 +183,7 @@ document.addEventListener("DOMContentLoaded", () => {
  *   });
  * ```
  */
-async function readSelectedFileContent(
+export async function readSelectedFileContent(
     element: HTMLInputElement,
 ): Promise<string | ArrayBuffer | null> {
     if (element.type !== 'file') 
@@ -229,7 +214,7 @@ async function readSelectedFileContent(
  * @returns A Promise that resolves with the content of the file as a string.
  * @throws Will throw an Error if the HTTP request fails, including the status code in the error message.
  */
-async function readFile(url: URL): Promise<string> {
+export async function readFile(url: URL): Promise<string> {
     let file = await fetch(url);
     if (!file.ok)
         throw new Error(`HTTP error! status: ${file.status}`);
@@ -240,7 +225,7 @@ async function readFile(url: URL): Promise<string> {
 /**
  * Saves the current scroll position to local storage.
  */
-function saveScrollPosition() {
+export function saveScrollPosition() {
     const scrollPosition = window.scrollY;
     localStorage.setItem('scrollPosition', scrollPosition.toString());
 }
@@ -249,7 +234,7 @@ function saveScrollPosition() {
  * Restores the scroll position from local storage.
  * If a scroll position is found, it scrolls to that position and removes it from local storage.
  */
-function restoreScrollPosition() {
+export function restoreScrollPosition() {
     const scrollPosition = localStorage.getItem('scrollPosition');
     if (scrollPosition) {
         window.scrollTo(0, parseInt(scrollPosition));

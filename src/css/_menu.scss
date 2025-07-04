@@ -26,7 +26,7 @@ header{
         transform : translateY(-50%);
 
         width     : calc(100% - ($menu-icon-size + $menu-item-blank * 2) * 2);
-        
+
         text-align: center;
         color     : map-get(colors.$colors, 'header-text');
     }
@@ -62,7 +62,7 @@ header{
                 a{
                     padding             : 0.5rem;
                     color               : inherit;
-                    text-decoration     : none;
+                    text-decoration     : underline;
                     background-size     : 200% 100%;
                     background-position : right center;
                     background-image    : linear-gradient(to left, transparent 51%, map-get(colors.$colors, 'accent') 50%);
@@ -143,13 +143,6 @@ header{
         top: -$header-height;
     }
 }
-header.hide{
-    animation: header-hide 0.3s ease-in-out forwards;
-
-    .menu{
-        max-height: 0;
-    }
-}
 
 @keyframes header-show{
     from{
@@ -159,6 +152,15 @@ header.hide{
         top: 0;
     }
 }
+
 header.show{
     animation: header-show 0.3s ease-in-out forwards;
+}
+
+header.hide{
+    animation: header-hide 0.3s ease-in-out forwards;
+    .menu{
+        max-height: 0 !important;
+        transition: max-height 0.3s ease-in-out;
+    }
 }
