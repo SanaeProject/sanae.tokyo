@@ -54,28 +54,23 @@
         </div>
         <script type="module" defer>
             const heroText = document.querySelector('.hero-text');
-            delayPrint(heroText,'SanaeProject',100);
+            delayPrint(heroText,'Sanae<br>Project',100);
 
             document.addEventListener('scroll',() => {
                 const scrollPer = window.scrollY / (window.innerHeight ? window.innerHeight : document.documentElement.clientHeight);
-                if(scrollPer > 0.1){
+                if(scrollPer > 0.2 && scrollPer < 0.8){
                     heroText.style.transition = 'all 0.3s ease-out';
                     heroText.style.position = 'absolute';
                     heroText.style.opacity = '0.3';
                     heroText.style.transform = 'translate(-50%,-50%) scale(0.8)';
+                    document.querySelector('header').classList.remove('hide');
                 }
-                else{
+                else if(scrollPer < 0.8){
+                    document.querySelector('header').classList.add('hide');
                     heroText.style.transition = 'all 0.3s ease-out';
                     heroText.style.position = 'fixed';
                     heroText.style.opacity = '1';
                     heroText.style.transform = 'translate(-50%,-50%) scale(1)';
-                }
-
-                if(scrollPer > 0.5){
-                    document.querySelector('header').classList.remove('hide');
-                }
-                else{
-                    document.querySelector('header').classList.add('hide');
                 }
             });
         </script>
