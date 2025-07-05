@@ -1,4 +1,3 @@
-"use strict";
 /*#################################################################################
    ####     ####    ##  ##    ####    ######   #####    #####      ####
  ###   #   ## ##    ##  ##   ## ##    ##       ##  ##   ##  ##      ##
@@ -10,15 +9,7 @@
 
   * Copyright 2024 SanaePRJ. All Rights Reserved.
 #################################################################################*/
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
+import { throttle } from "./util.js";
 let writingElements = [];
 /**
  * A function that simulates typing effect on a given HTML element.
@@ -40,56 +31,33 @@ let writingElements = [];
  * delayPrint(element, 'Hello, World!', 100);
  * ```
  */
-function delayPrint(eleOrSel_1, text_1, interval_1) {
-    return __awaiter(this, arguments, void 0, function* (eleOrSel, text, interval, add = false) {
-        var _a, _b, _c;
-        const element = typeof eleOrSel === "string" ? document.querySelector(eleOrSel) : eleOrSel;
-        const is_existing = () => {
-            return writingElements.includes(element);
-        };
-        // Wait until it finishes
-        while (is_existing())
-            yield new Promise((resolve) => setTimeout(resolve, interval));
-        // lock to write element
-        writingElements.push(element);
-        let writeContent;
-        if (add)
-            writeContent = ((_a = element.textContent) !== null && _a !== void 0 ? _a : '') + text;
-        else
-            writeContent = text;
-        let writeCount = add ? ((_c = (_b = element.textContent) === null || _b === void 0 ? void 0 : _b.length) !== null && _c !== void 0 ? _c : 0) : 0;
-        const printInterval = setInterval(() => {
-            if (writeCount < writeContent.length) {
-                element.innerHTML = writeContent.substring(0, writeCount + 1) + '_';
-                writeCount++;
-            }
-            else {
-                element.innerHTML = writeContent;
-                clearInterval(printInterval);
-                writingElements = writingElements.filter((elements) => elements !== element);
-            }
-        }, interval);
-    });
-}
-/**
- * A utility function to throttle the execution of a function.
- * It ensures that the function is called at most once every specified delay.
- *
- * @param func  - The function to be throttled.
- * @param delay - The time in milliseconds to wait before allowing the next call.
- *
- * @returns A throttled version of the provided function.
- */
-let throttleTimeout = null;
-function throttle(func, delay) {
-    return function (...args) {
-        if (!throttleTimeout) {
-            func.apply(this, args);
-            throttleTimeout = setTimeout(() => {
-                throttleTimeout = null;
-            }, delay);
-        }
+export async function delayPrint(eleOrSel, text, interval, add = false) {
+    const element = typeof eleOrSel === "string" ? document.querySelector(eleOrSel) : eleOrSel;
+    const is_existing = () => {
+        return writingElements.includes(element);
     };
+    // Wait until it finishes
+    while (is_existing())
+        await new Promise((resolve) => setTimeout(resolve, interval));
+    // lock to write element
+    writingElements.push(element);
+    let writeContent;
+    if (add)
+        writeContent = (element.textContent ?? '') + text;
+    else
+        writeContent = text;
+    let writeCount = add ? (element.textContent?.length ?? 0) : 0;
+    const printInterval = setInterval(() => {
+        if (writeCount < writeContent.length) {
+            element.innerHTML = writeContent.substring(0, writeCount + 1) + '_';
+            writeCount++;
+        }
+        else {
+            element.innerHTML = writeContent;
+            clearInterval(printInterval);
+            writingElements = writingElements.filter((elements) => elements !== element);
+        }
+    }, interval);
 }
 /**
  * Toggles the visibility of HTML elements based on their position in the viewport.
@@ -102,7 +70,7 @@ function throttle(func, delay) {
  *
  * @returns void
  */
-function toggleVisibilityOnScroll(elements, visibleStyle, invisibleStyle) {
+export function toggleVisibilityOnScroll(elements, visibleStyle, invisibleStyle) {
     const obs = new IntersectionObserver((entries) => {
         entries.forEach((entry) => {
             if (entry.isIntersecting)
@@ -130,7 +98,7 @@ let lastScroll = scrollY;
  * If the scroll distance exceeds the specified duration, it removes both classes
  * from all elements and then adds the appropriate class based on scroll direction.
  */
-function toggleStyleOnScroll(elements, duration, className) {
+export function toggleStyleOnScroll(elements, duration, className) {
     document.addEventListener("scroll", throttle(() => {
         let nowScroll = window.scrollY;
         if (Math.abs(nowScroll - lastScroll) < duration)
@@ -150,10 +118,12 @@ function toggleStyleOnScroll(elements, duration, className) {
     }, 100));
 }
 document.addEventListener("DOMContentLoaded", () => {
-    const elements = Array.from(document.querySelectorAll(".slide-in"));
+    const elements = Array.from(document.querySelectorAll("section"));
     toggleVisibilityOnScroll(elements, (entry) => {
-        entry.target.classList.add("slide-in-visible");
-    }, (entry) => { });
+        entry.target.classList.add("visible");
+    }, (entry) => {
+        entry.target.classList.remove("invisible");
+    });
 });
 /**
  * Reads the content of a selected file and returns it as a string, ArrayBuffer, or null.
@@ -178,23 +148,21 @@ document.addEventListener("DOMContentLoaded", () => {
  *   });
  * ```
  */
-function readSelectedFileContent(element) {
-    return __awaiter(this, void 0, void 0, function* () {
-        if (element.type !== 'file')
-            throw new Error('element type must file');
-        const file = element.files[0];
-        if (!file)
-            throw new Error('not selected file');
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                resolve(event.target.result);
-            };
-            reader.onerror = (error) => {
-                reject(error);
-            };
-            reader.readAsText(file);
-        });
+export async function readSelectedFileContent(element) {
+    if (element.type !== 'file')
+        throw new Error('element type must file');
+    const file = element.files[0];
+    if (!file)
+        throw new Error('not selected file');
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            resolve(event.target.result);
+        };
+        reader.onerror = (error) => {
+            reject(error);
+        };
+        reader.readAsText(file);
     });
 }
 /**
@@ -204,18 +172,16 @@ function readSelectedFileContent(element) {
  * @returns A Promise that resolves with the content of the file as a string.
  * @throws Will throw an Error if the HTTP request fails, including the status code in the error message.
  */
-function readFile(url) {
-    return __awaiter(this, void 0, void 0, function* () {
-        let file = yield fetch(url);
-        if (!file.ok)
-            throw new Error(`HTTP error! status: ${file.status}`);
-        return yield file.text();
-    });
+export async function readFile(url) {
+    let file = await fetch(url);
+    if (!file.ok)
+        throw new Error(`HTTP error! status: ${file.status}`);
+    return await file.text();
 }
 /**
  * Saves the current scroll position to local storage.
  */
-function saveScrollPosition() {
+export function saveScrollPosition() {
     const scrollPosition = window.scrollY;
     localStorage.setItem('scrollPosition', scrollPosition.toString());
 }
@@ -223,7 +189,7 @@ function saveScrollPosition() {
  * Restores the scroll position from local storage.
  * If a scroll position is found, it scrolls to that position and removes it from local storage.
  */
-function restoreScrollPosition() {
+export function restoreScrollPosition() {
     const scrollPosition = localStorage.getItem('scrollPosition');
     if (scrollPosition) {
         window.scrollTo(0, parseInt(scrollPosition));
