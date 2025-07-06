@@ -9,13 +9,28 @@
     <title>Document</title>
 
     <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/index.css">
+
+    <script type="module" src="./script/javascript/ui.js"></script>
+    <script type="module" src="./script/javascript/header.js"></script>
+    <script type="module" src="./script/javascript/util.js"></script>
+    <script type="module">
+        import * as UI from './script/javascript/ui.js';
+        window.delayPrint               = UI.delayPrint;
+        window.toggleVisibilityOnScroll = UI.toggleVisibilityOnScroll;
+        window.toggleStyleOnScroll      = UI.toggleStyleOnScroll;
+        window.readSelectedFileContent  = UI.readSelectedFileContent;
+
+        import * as util from './script/javascript/util.js';
+        window.throttle = util.throttle;
+    </script>
 </head>
 <!-- head End -->
 
 <!-- body Start -->
 <body>
     <!-- header Start -->
-    <header>
+    <header class="hide">
         <label class="menu-icon">
             <input type="checkbox" id="menu-toggle" class="menu-toggle">
             <span class="navicon"></span>
@@ -32,11 +47,42 @@
     </header>
     <!-- header End -->
 
+    <!-- hero Start -->
+    <aside class="hero">
+        <div class="hero-container">
+            <h2 class="hero-text">SanaeProject</h2>
+        </div>
+        <script type="module" defer>
+            const heroText = document.querySelector('.hero-text');
+            delayPrint(heroText,'Sanae<br>Project',100);
+
+            document.addEventListener('scroll',() => {
+                const scrollPer = window.scrollY / (window.innerHeight ? window.innerHeight : document.documentElement.clientHeight);
+                if(scrollPer > 0.2 && scrollPer < 0.8){
+                    heroText.style.transition = 'all 0.3s ease-out';
+                    heroText.style.position = 'absolute';
+                    heroText.style.opacity = '0.3';
+                    heroText.style.transform = 'translate(-50%,-50%) scale(0.8)';
+                    document.querySelector('header').classList.remove('hide');
+                }
+                else if(scrollPer < 0.8){
+                    document.querySelector('header').classList.add('hide');
+                    heroText.style.transition = 'all 0.3s ease-out';
+                    heroText.style.position = 'fixed';
+                    heroText.style.opacity = '1';
+                    heroText.style.transform = 'translate(-50%,-50%) scale(1)';
+                }
+            });
+        </script>
+    </aside>
+    <!-- hero End -->
+
     <!-- main Start -->
     <main>
-        <section">
+        <section style="height:1000px;">
             <h2>Welcome to SanaeProject</h2>
-            <p>This is a sample project to demonstrate the use of SCSS and responsive design.</p>
+            <p>This is a sample project to demonstrate the use of a responsive menu.</p>
+            <a href="#">Learn more</a>
         </section>
     </main>
     <!-- main End -->

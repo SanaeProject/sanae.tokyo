@@ -1,0 +1,72 @@
+@font-face {
+  font-family: "Noto Sans JP";
+  src: url("../fonts/Noto_Sans_JP/NotoSansJP-VariableFont_wght.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Orbitron";
+  src: url("../fonts/Orbitron/Orbitron-VariableFont_wght.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Roboto";
+  src: url("../fonts/Roboto/Roboto-VariableFont_wdth_wght.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Sankofa Display";
+  src: url("../fonts/Sankofa_Display/SankofaDisplay-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Major Mono Display";
+  src: url("../fonts/Major_Mono_Display/MajorMonoDisplay-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+aside.hero {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+aside.hero .hero-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  background-image: url("../picture/programming.webp");
+  background-size: cover;
+  background-position: left center;
+  background-repeat: no-repeat;
+}
+aside.hero .hero-container:after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1;
+  pointer-events: none;
+}
+aside.hero .hero-container h2.hero-text {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #fff;
+  text-align: center;
+  z-index: 2;
+  font-family: "Major Mono Display";
+  font-size: 10vw;
+  font-weight: 500;
+  transition: all 0.3s ease-in-out;
+}/*# sourceMappingURL=index.css.map */
