@@ -81,8 +81,7 @@
                 <tbody id="tag-list">
                     <script>
                         document.addEventListener('DOMContentLoaded', () => {
-                            fetch('./include/request.php?req=tag')
-                                .then(response => response.json())
+                            getJsonFromFetch('./include/request.php?req=tag')
                                 .then(data => {
                                     const tbody = document.querySelector('#tag-list');
                                     data.forEach(tag => {
