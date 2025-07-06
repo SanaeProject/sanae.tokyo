@@ -6,7 +6,6 @@ export function hero(heroText: HTMLElement, text: string, delay: number = 100) {
             behavior: 'smooth'
         });
     }, delay * text.length + 500);
-    document.querySelector('header')!.classList.add('hide');
 
     document.addEventListener('scroll',() => {
         const scrollPer = window.scrollY / (window.innerHeight ? window.innerHeight : document.documentElement.clientHeight);

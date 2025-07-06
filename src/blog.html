@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+
+<!-- html Start -->
+<html lang="ja">
+<!-- head Start -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog</title>
+    <meta name="description" content="SanaeProjectのブログページです。AIや自然言語処理に関する最新情報や技術的な記事を掲載しています。">
+    <meta name="keywords" content="SanaeProject, AI, 自然言語処理, NeuralNetwork, ディープラーニング">
+
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/index.css">
+    <link rel="stylesheet" href="./css/blog.css">
+
+    <script type="module" src="./script/javascript/ui.js"></script>
+    <script type="module" src="./script/javascript/header.js"></script>
+    <script type="module" src="./script/javascript/util.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <script type="module">
+        import * as UI from './script/javascript/ui.js';
+        window.delayPrint               = UI.delayPrint;
+        window.toggleVisibilityOnScroll = UI.toggleVisibilityOnScroll;
+        window.toggleStyleOnScroll      = UI.toggleStyleOnScroll;
+        window.readSelectedFileContent  = UI.readSelectedFileContent;
+        
+        import * as util from './script/javascript/util.js';
+        window.throttle = util.throttle;
+    </script>
+
+    <style>
+        .write,.wrote {
+            display: inline-block;
+            padding: 0 0.5em;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<!-- head End -->
+
+<!-- body Start -->
+<body>
+    <!-- header Start -->
+    <header>
+        <label class="menu-icon">
+            <input type="checkbox" id="menu-toggle" class="menu-toggle">
+            <span class="navicon"></span>
+        </label>
+        <nav class="menu">
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="blog.html">Blog</a></li>
+                <li><a href="terms.html">Terms</a></li>
+                <li><a href="mailto:support@sanae.tokyo">Contact</a></li>
+            </ul>
+        </nav>
+        <h1>Blog</h1>
+    </header>
+    <!-- header End -->
+
+    <!-- Sidebar Toggle Button -->
+    <button class="sidebar-toggle" id="sidebar-toggle">
+        &gt;
+    </button>
+
+    <!-- side Start -->
+    <aside class="side">
+        <div class="title-wrapper">
+            <h2>Blog Tags</h2>
+        </div>
+        <div class="content-wrapper">
+            <table class="common">
+                <thead>
+                    <tr>
+                        <th>Tag</th>
+                        <th>Count</th>
+                    </tr>
+                </thead>
+                <tbody id="tag-list">
+                    <script>
+                        document.addEventListener('DOMContentLoaded', () => {
+                            fetch('./include/request.php?req=tag')
+                                .then(response => response.json())
+                                .then(data => {
+                                    const tbody = document.querySelector('#tag-list');
+                                    data.forEach(tag => {
+                                        const tr = document.createElement('tr');
+                                        tr.innerHTML = `
+                                            <td><a href="blog.html?tag=${tag.name}">${tag.name}</a></td>
+                                            <td>${tag.count}</td>
+                                        `;
+                                        tbody.appendChild(tr);
+                                    });
+
+                                    const tr = document.createElement('tr');
+                                        tr.innerHTML = '<td colspan="2"><a href="blog.html">すべて</a></td>';
+                                        tbody.appendChild(tr);
+                                });
+                        });
+                    </script>
+                </tbody>
+            </table>
+        </div>
+    </aside>
+    <!-- side End -->
+
+    <!-- main Start -->
+    <main>
+        <section class="slide-in">
+            <div class="title-wrapper">
+                <h2>Blog</h2>
+            </div>
+            <div class="content-wrapper">
+                <div id="md-content">
+                </div>
+                <table id="blog-list" class="common">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody id="blog-list">
+                    </tbody>
+                </table>
+                <script>
+                    document.addEventListener('DOMContentLoaded', () => {
+                        const getTag = new URLSearchParams(window.location.search).get('tag');
+                        const getId = new URLSearchParams(window.location.search).get('id');
+
+                        if (getId) {
+                            fetch(`./include/request.php?req=blog_detail&id=${getId}`)
+                                .then(response => response.json())
+                                .then(data => {
+                                    const content = document.querySelector('#md-content');
+                                    content.innerHTML = marked.parse(data.content);
+                                })
+                                .catch(error => console.error('Error fetching blog content:', error));
+                            document.querySelector('#blog-list').style.display = 'none';
+                            return;
+                        }
+                        
+                        fetch('./include/request.php?req=blog'+(getTag ? `&tag=${getTag}` : ''))
+                            .then(response => response.json())
+                            .then(data => {
+                                const tbody = document.querySelector('#blog-list');
+                                data.forEach(blog => {
+                                    const tr = document.createElement('tr');
+                                    tr.innerHTML = `
+                                        <td><a href="blog.html?id=${blog.id}">${blog.title}</a></td>
+                                        <td>${blog.created_at}</td>
+                                    `;
+                                    tbody.appendChild(tr);
+                                });
+                            });
+                    });
+                </script>
+            </div>
+        </section>
+    </main>
+    <!-- main End -->
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => { 
+            const elements = Array.from(document.querySelectorAll(".slide-in,.write")); 
+            toggleVisibilityOnScroll( elements, (entry) => {
+                if(entry.target.classList.contains("write")){
+                    delayPrint(
+                        entry.target, 
+                        entry.target.textContent, 
+                        100
+                    );
+                    entry.target.classList.remove("write");
+                    entry.target.classList.add("wrote");
+                }
+
+                if(entry.target.classList.contains("slide-in"))
+                    entry.target.classList.add("slide-in-visible");
+                }, (entry) => {}
+            ); 
+
+            // サイドバーの表示/非表示制御
+            const sidebarToggle = document.getElementById('sidebar-toggle');
+            const sidebar = document.querySelector('.side');
+            let isOpen = false;
+
+            sidebarToggle.addEventListener('click', () => {
+                if (isOpen) {
+                    // サイドバーを非表示
+                    sidebar.classList.remove('visible');
+                    sidebarToggle.classList.remove('sidebar-open');
+                    sidebarToggle.innerHTML = '&gt;';
+                    isOpen = false;
+                } else {
+                    // サイドバーを表示
+                    sidebar.classList.add('visible');
+                    sidebarToggle.classList.add('sidebar-open');
+                    sidebarToggle.innerHTML = '&lt;';
+                    isOpen = true;
+                }
+            });
+        });
+    </script>
+
+    <!-- footer Start -->
+    <footer>
+        <p>&copy; 2023 SanaeProject. All rights reserved.</p>
+    </footer>
+    <!-- footer End -->
+</body>
+<!-- body End -->
+</html>
+<!-- html End -->

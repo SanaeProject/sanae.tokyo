@@ -18,3 +18,17 @@ export function throttle<T extends (...args: any[]) => void>(func: T, delay: num
         }
     };
 }
+
+export function getJsonFromFetch(url: string): Promise<any> {
+    return fetch(url)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .catch(error => {
+            console.error('Error fetching JSON:', error);
+            throw error;
+        });
+}
