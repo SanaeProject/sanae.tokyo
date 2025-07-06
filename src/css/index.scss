@@ -1,47 +1,26 @@
 @use 'fonts';
 @use 'colors';
 @use 'component';
+@use 'hero';
 
-aside.hero{
-    position: relative;
-    width   : 100%;
-    height  : 100vh;
-    overflow: hidden;
+@include hero.hero('../picture/programming.webp');
+.circle{
+    border-radius: 50%;
+    overflow     : hidden;
+    display      : inline-block;
+    width        : 50px;
+    height       : 50px;
+}
+.account-wrapper{
+    display     : flex;
+    align-items : center;
+    gap         : 1rem;
 
-    .hero-container{
-        position            : absolute;
-        top                 : 0;
-        left                : 0;
-        width               : 100%;
-        height              : 100vh;
-        overflow            : hidden;
-        background-image    : url('../picture/programming.webp');
-        background-size     : cover;
-        background-position : left center;
-        background-repeat   : no-repeat;
-
-        &:after{
-            content             : '';
-            position            : absolute;
-            top                 : 0;
-            left                : 0;
-            width               : 100%;
-            height              : 100%;
-            background          : rgba(0, 0, 0, 0.5);
-            z-index             : 1;
-            pointer-events      : none; 
-        }
-        h2.hero-text{
-            position      : fixed;
-            top           : 50%;
-            left          : 50%;
-            transform     : translate(-50%, -50%);
-            color         : map-get(colors.$colors, 'header-text');
-            text-align    : center;
-            z-index       : 2;
-            
-            @include fonts.font-subtitle(10vw);
-            @include component.transition();
-        }
+    img.circle {
+        width  : 50px;
+        height : 50px;
+    }
+    span {
+        font-size: 1.5rem;
     }
 }

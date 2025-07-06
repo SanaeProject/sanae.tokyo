@@ -53,11 +53,15 @@ aside.hero .hero-container:after {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.6);
   z-index: 1;
   pointer-events: none;
 }
 aside.hero .hero-container h2.hero-text {
+  font-family: "Major Mono Display";
+  font-size: 10vw;
+  font-weight: 500;
+  transition: all 0.3s ease-in-out;
   position: fixed;
   top: 50%;
   left: 50%;
@@ -65,8 +69,32 @@ aside.hero .hero-container h2.hero-text {
   color: #fff;
   text-align: center;
   z-index: 2;
-  font-family: "Major Mono Display";
-  font-size: 10vw;
-  font-weight: 500;
-  transition: all 0.3s ease-in-out;
+}
+aside.hero .hero-container h2.hero-text.absolute-position {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.8);
+  opacity: 0.3;
+}
+
+.circle {
+  border-radius: 50%;
+  overflow: hidden;
+  display: inline-block;
+  width: 50px;
+  height: 50px;
+}
+
+.account-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.account-wrapper img.circle {
+  width: 50px;
+  height: 50px;
+}
+.account-wrapper span {
+  font-size: 1.5rem;
 }/*# sourceMappingURL=index.css.map */

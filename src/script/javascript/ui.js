@@ -117,14 +117,6 @@ export function toggleStyleOnScroll(elements, duration, className) {
         lastScroll = nowScroll;
     }, 100));
 }
-document.addEventListener("DOMContentLoaded", () => {
-    const elements = Array.from(document.querySelectorAll("section"));
-    toggleVisibilityOnScroll(elements, (entry) => {
-        entry.target.classList.add("visible");
-    }, (entry) => {
-        entry.target.classList.remove("invisible");
-    });
-});
 /**
  * Reads the content of a selected file and returns it as a string, ArrayBuffer, or null.
  *

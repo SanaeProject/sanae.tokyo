@@ -24,8 +24,8 @@
     font-size   : $font-size;
     font-weight : $font-weight;
 }
-@mixin font-body($font-size: 1rem, $font-weight: 400, $font-families: 'Roboto' 'Noto Sans JP' sans-serif) {
-    font-family : $font-families;
+@mixin font-body($font-size: 1rem, $font-weight: 400, $font-families: ('Roboto', 'Noto Sans JP', sans-serif)) {
+    font-family : join($font-families, comma);
     font-size   : $font-size;
     font-weight : $font-weight;
 }
