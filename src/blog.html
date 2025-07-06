@@ -28,6 +28,7 @@
         
         import * as util from './script/javascript/util.js';
         window.throttle = util.throttle;
+        window.getJsonFromFetch = util.getJsonFromFetch;
     </script>
 
     <style>
@@ -101,6 +102,10 @@
                     </script>
                 </tbody>
             </table>
+            <form action="" method="get">
+                <input type="text" name="search" placeholder="タイトルを入力">
+                <button type="submit">検索</button>
+            </form>
         </div>
     </aside>
     <!-- side End -->
@@ -128,6 +133,7 @@
                     document.addEventListener('DOMContentLoaded', () => {
                         const getTag = new URLSearchParams(window.location.search).get('tag');
                         const getId = new URLSearchParams(window.location.search).get('id');
+                        const getSearch = new URLSearchParams(window.location.search).get('search');
 
                         if (getId) {
                             fetch(`./include/request.php?req=blog_detail&id=${getId}`)
@@ -140,8 +146,8 @@
                             document.querySelector('#blog-list').style.display = 'none';
                             return;
                         }
-                        
-                        fetch('./include/request.php?req=blog'+(getTag ? `&tag=${getTag}` : ''))
+
+                        fetch('./include/request.php?req=blog'+(getTag ? `&tag=${getTag}` : '')+(getSearch ? `&search=${encodeURIComponent(getSearch)}` : ''))
                             .then(response => response.json())
                             .then(data => {
                                 const tbody = document.querySelector('#blog-list');
