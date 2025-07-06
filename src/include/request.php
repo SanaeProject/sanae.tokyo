@@ -15,19 +15,28 @@ if(isset($_GET['req']) && $_GET['req'] === 'tag') {
 }
 if(isset($_GET['req']) && $_GET['req'] === 'blog') {
     try {
-        $tag = htmlspecialchars(isset($_GET['tag']) ? $_GET['tag'] : '', ENT_QUOTES, 'UTF-8');
-        $result = [];
-
-        if(empty($tag)) {
-            echo json_encode($pdoHandler->executionQuery("SELECT * FROM blog ORDER BY created_at DESC"));
-        }else {
+        $tag = isset($_GET['tag']) ? htmlspecialchars($_GET['tag'], ENT_QUOTES, 'UTF-8') : '';
+        $search = isset($_GET['search']) ? htmlspecialchars($_GET['search'], ENT_QUOTES, 'UTF-8') : '';
+        $params = [];
+        if (empty($tag)) {
+            $query = "SELECT * FROM blog";
+            if (!empty($search)) {
+                $query .= " WHERE title LIKE ?";
+                $params[] = "%{$search}%";
+            }
+            $query .= " ORDER BY created_at DESC";
+        } else {
             $query = "SELECT blog.* FROM blog
                       JOIN tag ON blog.id = tag.blog_id
-                      WHERE tag.name = ?
-                      ORDER BY blog.created_at DESC";
-            $params = [$tag];
-            echo json_encode($pdoHandler->executionQuery($query, $params));
+                      WHERE tag.name = ?";
+            $params[] = $tag;
+            if (!empty($search)) {
+                $query .= " AND blog.title LIKE ?";
+                $params[] = "%{$search}%";
+            }
+            $query .= " ORDER BY blog.created_at DESC";
         }
+        echo json_encode($pdoHandler->executionQuery($query, $params), 0);
         exit;
     } catch (Exception $e) {
         echo json_encode(['error' => $e->getMessage()]);
