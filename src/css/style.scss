@@ -198,10 +198,10 @@ table {
 }
 
 .effect.slide-in {
-  background: linear-gradient(to left, darken(map-get(colors.$colors, 'background'), 2%) 51%, map-get(colors.$colors, 'primary') 50%);
-  background-repeat: no-repeat;
-  background-size: 200% 100%;
-  background-position: left center;
+  background          : linear-gradient(to left, darken(map-get(colors.$colors, 'background'), 2%) 51%, map-get(colors.$colors, 'primary') 50%);
+  background-repeat   : no-repeat;
+  background-size     : 200% 100%;
+  background-position : left center;
   @include component.transition(background-position, 0.8s);
 
   &.slide-in-visible {
