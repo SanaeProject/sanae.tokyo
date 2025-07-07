@@ -16,10 +16,10 @@ if(isset($_GET['req']) && $_GET['req'] === 'tag') {
 }
 if(isset($_GET['req']) && $_GET['req'] === 'blog') {
     try {
-        $tag = isset($_GET['tag']) ? htmlspecialchars($_GET['tag'], ENT_QUOTES, 'UTF-8') : '';
+        $tag    = isset($_GET['tag'])    ? htmlspecialchars($_GET['tag'], ENT_QUOTES, 'UTF-8') : '';
         $search = isset($_GET['search']) ? htmlspecialchars($_GET['search'], ENT_QUOTES, 'UTF-8') : '';
-        $skip = isset($_GET['skip']) ? intval($_GET['skip']) : 0;
-        
+        $skip   = isset($_GET['skip'])   ? intval($_GET['skip']) : 0;
+
         $params = [];
         if (empty($tag)) {
             $query = "SELECT * FROM blog";
