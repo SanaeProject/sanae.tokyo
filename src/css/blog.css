@@ -193,8 +193,8 @@ header.hide .menu {
   top: 70%;
   left: 10px;
   z-index: 101;
-  background-color: #333;
-  color: white;
+  background-color: rgba(55, 55, 55, 0.9803921569);
+  color: #fff;
   border: none;
   border-radius: 50%;
   width: 40px;
@@ -209,7 +209,7 @@ header.hide .menu {
   transition: all 0.3s ease-in-out;
 }
 .sidebar-toggle:hover {
-  background-color: #555;
+  background-color: rgba(30, 30, 30, 0.9803921569);
 }
 .sidebar-toggle.sidebar-open {
   left: calc(50vw - 20px);
@@ -231,4 +231,115 @@ header.hide .menu {
   .sidebar-toggle.sidebar-open {
     left: calc(90vw - 20px);
   }
+}
+.write, .wrote {
+  display: inline-block;
+  padding: 0 0.5em;
+  font-weight: bold;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.pagination-btn {
+  padding: 0.5rem 1rem;
+  background-color: rgba(55, 55, 55, 0.9803921569);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s ease;
+}
+.pagination-btn:hover:not(.disabled) {
+  background-color: rgba(30, 30, 30, 0.9803921569);
+}
+.pagination-btn.disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.search-form {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.search-input {
+  padding: 0.5rem;
+  border: 1px solid #d4d4d8;
+  border-radius: 4px;
+  font-size: 14px;
+  width: 60%;
+}
+
+.search-button {
+  padding: 0.5rem 1rem;
+  background-color: rgba(55, 55, 55, 0.9803921569);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-left: 0.5rem;
+}
+.search-button:hover {
+  background-color: rgba(30, 30, 30, 0.9803921569);
+}
+
+.delete {
+  display: inline-block;
+  position: relative;
+  padding: 1.2rem;
+  background-color: #f87171;
+  background-image: url("../picture/delete.svg");
+  background-repeat: no-repeat;
+  background-size: 1.5rem;
+  background-position: center;
+  font-weight: 500;
+  border: none;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease-in-out;
+}
+
+.delete:hover {
+  background-color: #f64040;
+  background-position: center -2px;
+}
+
+.editor-wrapper {
+  display: flex;
+  flex-direction: row;
+  margin: 1rem;
+  align-items: flex-start;
+}
+
+#md-code-wrapper {
+  width: 100%;
+  padding: 1rem;
+  border: 1px solid #d4d4d8;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+#md-code {
+  width: 100%;
+  height: 30vh;
+  padding: 0.5rem;
+  border: none;
+  color: #2c3e50;
+  background-color: #fafafa;
+  outline: none;
+  resize: vertical;
+}
+
+#md-content {
+  width: 100%;
+  padding: 1rem;
 }/*# sourceMappingURL=blog.css.map */

@@ -3,6 +3,7 @@ require_once __DIR__.'/sanae.tokyo.php';
 require_once __DIR__.'/sql.php';
 
 $pdoHandler = connectMySql();
+const MAX_LIMIT = 10;
 
 if(isset($_GET['req']) && $_GET['req'] === 'tag') {
     try {
@@ -15,8 +16,10 @@ if(isset($_GET['req']) && $_GET['req'] === 'tag') {
 }
 if(isset($_GET['req']) && $_GET['req'] === 'blog') {
     try {
-        $tag = isset($_GET['tag']) ? htmlspecialchars($_GET['tag'], ENT_QUOTES, 'UTF-8') : '';
+        $tag    = isset($_GET['tag'])    ? htmlspecialchars($_GET['tag'], ENT_QUOTES, 'UTF-8') : '';
         $search = isset($_GET['search']) ? htmlspecialchars($_GET['search'], ENT_QUOTES, 'UTF-8') : '';
+        $skip   = isset($_GET['skip'])   ? intval($_GET['skip']) : 0;
+
         $params = [];
         if (empty($tag)) {
             $query = "SELECT * FROM blog";
@@ -24,7 +27,7 @@ if(isset($_GET['req']) && $_GET['req'] === 'blog') {
                 $query .= " WHERE title LIKE ?";
                 $params[] = "%{$search}%";
             }
-            $query .= " ORDER BY created_at DESC";
+            $query .= " ORDER BY created_at DESC LIMIT " . MAX_LIMIT . " OFFSET " . MAX_LIMIT * $skip;
         } else {
             $query = "SELECT blog.* FROM blog
                       JOIN tag ON blog.id = tag.blog_id
@@ -34,7 +37,7 @@ if(isset($_GET['req']) && $_GET['req'] === 'blog') {
                 $query .= " AND blog.title LIKE ?";
                 $params[] = "%{$search}%";
             }
-            $query .= " ORDER BY blog.created_at DESC";
+            $query .= " ORDER BY blog.created_at DESC LIMIT " . MAX_LIMIT . " OFFSET " . MAX_LIMIT * $skip;
         }
         echo json_encode($pdoHandler->executionQuery($query, $params));
         exit;

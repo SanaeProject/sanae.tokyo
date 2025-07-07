@@ -17,8 +17,6 @@ CREATE TABLE IF NOT EXISTS tag(
     created_at DATE DEFAULT CURRENT_DATE,
     FOREIGN KEY (blog_id) REFERENCES blog(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
-
-
 -- ブログのテスト
 INSERT INTO blog (title, content) VALUES ('テストブログ1', 'これはテストブログの内容です。');
 INSERT INTO blog (title, content) VALUES ('テストブログ2', '2つ目のテストブログです。');

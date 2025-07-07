@@ -18,6 +18,10 @@
     <script type="module" src="./script/javascript/header.js"></script>
     <script type="module" src="./script/javascript/util.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@latest/dist/contrib/auto-render.min.js"></script>
+    <script defer src="./script/javascript/latex.js"></script>
 
     <script type="module">
         import * as UI from './script/javascript/ui.js';
@@ -30,14 +34,6 @@
         window.throttle = util.throttle;
         window.getJsonFromFetch = util.getJsonFromFetch;
     </script>
-
-    <style>
-        .write,.wrote {
-            display: inline-block;
-            padding: 0 0.5em;
-            font-weight: bold;
-        }
-    </style>
 </head>
 <!-- head End -->
 
@@ -102,9 +98,9 @@
                     </script>
                 </tbody>
             </table>
-            <form action="" method="get">
-                <input type="text" name="search" placeholder="タイトルを入力">
-                <button type="submit">検索</button>
+            <form class="search-form" method="get">
+                <input  class="search-input" type="text" name="search" placeholder="タイトルを入力">
+                <button class="search-button" type="submit">検索</button>
             </form>
         </div>
     </aside>
@@ -119,7 +115,7 @@
             <div class="content-wrapper">
                 <div id="md-content">
                 </div>
-                <table id="blog-list" class="common">
+                <table class="common">
                     <thead>
                         <tr>
                             <th>Title</th>
@@ -129,28 +125,51 @@
                     <tbody id="blog-list">
                     </tbody>
                 </table>
+                <div id="pagination" class="pagination"></div>
                 <script>
                     document.addEventListener('DOMContentLoaded', () => {
-                        const getTag = new URLSearchParams(window.location.search).get('tag');
-                        const getId = new URLSearchParams(window.location.search).get('id');
-                        const getSearch = new URLSearchParams(window.location.search).get('search');
+                        const urlSearchParm = new URLSearchParams(window.location.search);
+                        const getTag    = urlSearchParm.get('tag');
+                        const getId     = urlSearchParm.get('id');
+                        const getSearch = urlSearchParm.get('search');
+                        const getSkip   = parseInt(urlSearchParm.get('skip') || 0);
 
+                        // IDが指定されている場合はそのブログの詳細を表示
                         if (getId) {
                             fetch(`./include/request.php?req=blog_detail&id=${getId}`)
                                 .then(response => response.json())
                                 .then(data => {
                                     const content = document.querySelector('#md-content');
-                                    content.innerHTML = marked.parse(data.content);
+                                    content.innerHTML = parseMarkdownWithMath(data.content);
+
+                                    // KaTeXでLaTeX数式をレンダリング
+                                    try {
+                                        renderKaTeX(content);
+                                    } catch (e) {
+                                        console.warn('KaTeX rendering error:', e);
+                                    }
                                 })
                                 .catch(error => console.error('Error fetching blog content:', error));
-                            document.querySelector('#blog-list').style.display = 'none';
+                            document.querySelector('table:has(#blog-list)').style.display = 'none';
                             return;
                         }
 
-                        fetch('./include/request.php?req=blog'+(getTag ? `&tag=${getTag}` : '')+(getSearch ? `&search=${encodeURIComponent(getSearch)}` : ''))
+                        // ブログ一覧を取得
+                        fetch('./include/request.php?req=blog'+
+                            (getTag     ? `&tag=${getTag}` : '')+
+                            (getSearch  ? `&search=${encodeURIComponent(getSearch)}` : '')+
+                            (getSkip    ? `&skip=${getSkip}` : '')
+                        )
                             .then(response => response.json())
                             .then(data => {
-                                const tbody = document.querySelector('#blog-list');
+                                const tbody      = document.querySelector('#blog-list');
+                                const pagination = document.querySelector('#pagination');
+
+                                // テーブルをクリア
+                                tbody.innerHTML      = '';
+                                pagination.innerHTML = '';
+                                
+                                // ブログデータを表示
                                 data.forEach(blog => {
                                     const tr = document.createElement('tr');
                                     tr.innerHTML = `
@@ -159,6 +178,40 @@
                                     `;
                                     tbody.appendChild(tr);
                                 });
+
+                                // ページネーションボタンを作成
+                                const createPaginationButton = (text, skip, disabled = false) => {
+                                    const button = document.createElement('button');
+                                    button.textContent = text;
+                                    button.className = 'pagination-btn';
+                                    if (disabled) {
+                                        button.disabled = true;
+                                        button.className += ' disabled';
+                                    } else {
+                                        button.addEventListener('click', () => {
+                                            const url = new URL(window.location);
+                                            if (skip > 0) {
+                                                url.searchParams.set('skip', skip);
+                                            } else {
+                                                url.searchParams.delete('skip');
+                                            }
+                                            window.location.href = url.toString();
+                                        });
+                                    }
+                                    return button;
+                                };
+
+                                // 戻るボタン（skipが1以上の時）
+                                if (getSkip > 0) {
+                                    const prevButton = createPaginationButton('← 戻る', getSkip - 1);
+                                    pagination.appendChild(prevButton);
+                                }
+
+                                // 次へボタン（データが10件ちょうどの時）
+                                if (data.length % 10 === 0 && data.length > 0) {
+                                    const nextButton = createPaginationButton('次へ →', getSkip + 1);
+                                    pagination.appendChild(nextButton);
+                                }
                             });
                     });
                 </script>
