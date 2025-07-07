@@ -39,7 +39,7 @@ if(isset($_GET['req']) && $_GET['req'] === 'blog') {
             }
             $query .= " ORDER BY blog.created_at DESC LIMIT " . MAX_LIMIT . " OFFSET " . MAX_LIMIT * $skip;
         }
-        echo json_encode($pdoHandler->executionQuery($query, $params), 0);
+        echo json_encode($pdoHandler->executionQuery($query, $params));
         exit;
     } catch (Exception $e) {
         echo json_encode(['error' => $e->getMessage()]);
