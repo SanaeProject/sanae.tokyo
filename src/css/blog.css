@@ -290,4 +290,56 @@ header.hide .menu {
 }
 .search-button:hover {
   background-color: rgba(30, 30, 30, 0.9803921569);
+}
+
+.delete {
+  display: inline-block;
+  position: relative;
+  padding: 1.2rem;
+  background-color: #f87171;
+  background-image: url("../picture/delete.svg");
+  background-repeat: no-repeat;
+  background-size: 1.5rem;
+  background-position: center;
+  font-weight: 500;
+  border: none;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease-in-out;
+}
+
+.delete:hover {
+  background-color: #f64040;
+  background-position: center -2px;
+}
+
+.editor-wrapper {
+  display: flex;
+  flex-direction: row;
+  margin: 1rem;
+  align-items: flex-start;
+}
+
+#md-code-wrapper {
+  width: 100%;
+  padding: 1rem;
+  border: 1px solid #d4d4d8;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+#md-code {
+  width: 100%;
+  height: 30vh;
+  padding: 0.5rem;
+  border: none;
+  color: #2c3e50;
+  background-color: #fafafa;
+  outline: none;
+  resize: vertical;
+}
+
+#md-content {
+  width: 100%;
+  padding: 1rem;
 }/*# sourceMappingURL=blog.css.map */

@@ -18,6 +18,10 @@
     <script type="module" src="./script/javascript/header.js"></script>
     <script type="module" src="./script/javascript/util.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@latest/dist/contrib/auto-render.min.js"></script>
+    <script defer src="./script/javascript/latex.js"></script>
 
     <script type="module">
         import * as UI from './script/javascript/ui.js';
@@ -136,7 +140,14 @@
                                 .then(response => response.json())
                                 .then(data => {
                                     const content = document.querySelector('#md-content');
-                                    content.innerHTML = marked.parse(data.content);
+                                    content.innerHTML = parseMarkdownWithMath(data.content);
+
+                                    // KaTeXでLaTeX数式をレンダリング
+                                    try {
+                                        renderKaTeX(content);
+                                    } catch (e) {
+                                        console.warn('KaTeX rendering error:', e);
+                                    }
                                 })
                                 .catch(error => console.error('Error fetching blog content:', error));
                             document.querySelector('table:has(#blog-list)').style.display = 'none';

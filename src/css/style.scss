@@ -208,3 +208,61 @@ table {
     background-position: right center;
   }
 }
+
+@mixin button-base {
+  position        : relative;
+  display         : inline-block;
+  padding         : 10px 25px;
+  background-color: map-get(colors.$colors, 'arrow-bg');
+  font-weight     : 500;
+  border          : none;
+  border-radius   : 5px;
+  text-decoration : none;
+  @include component.box-shadow;
+  @include component.transition;
+}
+@mixin button-arrow($arrow-color, $hover-color) {
+  &::before {
+    content         : '';
+    position        : absolute;
+    width           : 100%;
+    height          : 2px;
+    background-color: map-get(colors.$colors, $arrow-color);
+    top             : calc(90% - 3px);
+    left            : 10px;
+    @include component.transition;
+  }
+
+  &::after {
+    content         : '';
+    position        : absolute;
+    width           : 12px;
+    height          : 2px;
+    background-color: map-get(colors.$colors, $arrow-color);
+    top             : calc(90% - 3px);
+    left            : calc(100% - 2px);
+    transform       : translateY(calc(-100% - 2px)) rotate(30deg);
+    transition      : 0.3s;
+  }
+
+  &:hover {
+    background-color: mix(white, map-get(colors.$colors, $hover-color), 90%);
+    color           : map-get(colors.$colors, $hover-color);
+    text-decoration : none;
+    @include component.transition;
+
+    &::before {
+      left: 20%;
+    }
+
+    &::after {
+      left: calc(120% - 12px);
+    }
+  }
+}
+.next-btn {
+  @include button-base;
+  max-width: 240px;
+  color    : map-get(colors.$colors, 'arrow-text');
+  @include button-arrow('arrow', 'arrow');
+}
