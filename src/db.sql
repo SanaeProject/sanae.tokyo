@@ -17,14 +17,11 @@ CREATE TABLE IF NOT EXISTS tag(
     created_at DATE DEFAULT CURRENT_DATE,
     FOREIGN KEY (blog_id) REFERENCES blog(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
--- ブログのテスト
-INSERT INTO blog (title, content) VALUES ('テストブログ1', 'これはテストブログの内容です。');
-INSERT INTO blog (title, content) VALUES ('テストブログ2', '2つ目のテストブログです。');
 
--- ブログが正しく挿入されたか確認
-SELECT * FROM blog;
-
--- タグのテスト
-INSERT INTO tag (blog_id, name) VALUES (1, 'テストタグ1');
-INSERT INTO tag (blog_id, name) VALUES (1, 'テストタグ2');
-INSERT INTO tag (blog_id, name) VALUES (2, 'テストタグ3');
+-- noticeを追加
+INSERT INTO notice (event, created_at) VALUES
+('2017 Sanae initiated the Info Project, starting research and program development.', '2017-01-01'),
+('2020 The project was renamed to the Sanae Project. A website was launched on the FC2 server.', '2020-01-01'),
+('2021 The server was changed to Starfree.', '2021-01-01'),
+('2023 Began developing and studying neural networks. We have renewed our website!', '2023-01-01'),
+('2025 We have renewed our website.', '2025-01-01');

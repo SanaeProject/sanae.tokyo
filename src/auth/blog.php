@@ -181,6 +181,45 @@ if (!isset($_SESSION['csrf_token'])) {
                         const getSearch = urlSearchParm.get('search');
                         const getSkip   = parseInt(urlSearchParm.get('skip') || 0);
 
+                        document.querySelector('#md-code').addEventListener('keydown', (event) => {
+                            if(event.key !== 'Enter' && event.key !== 'Tab') {
+                                return; // EnterやTab以外のキーは何もしない
+                            }
+
+                            event.preventDefault();
+                            const textarea = event.target;
+                            const start    = textarea.selectionStart;
+                            const end      = textarea.selectionEnd;
+
+                            const value      = textarea.value;
+                            const before     = value.substring(0, start);
+                            const selected   = value.substring(start, end);
+                            const after      = value.substring(end);
+                            if(event.key === 'Enter') {
+                                event.target.value = before + selected + '  \n' + after;
+                            }
+                            if (event.key === 'Tab') {
+                                const lines = selected.split('\n');
+                                const tab = '    ';
+                                let modified;
+
+                                if (event.shiftKey) {
+                                    // Shift+Tab → アンインデント（行頭の4スペースを削除）
+                                    modified = lines
+                                        .map(line => line.startsWith(tab) ? line.slice(tab.length) : line)
+                                        .join('\n');
+                                } else {
+                                    // Tab → インデント（行頭に4スペース追加）
+                                    modified = lines.map(line => tab + line).join('\n');
+                                }
+
+                                textarea.value = before + modified + after;
+
+                                // 選択範囲の再設定（カーソルの再配置も含め）
+                                textarea.selectionStart = start;
+                                textarea.selectionEnd = start + modified.length;
+                            }
+                        });
                         document.querySelector('#md-code').addEventListener('input', (event) => {
                             const content = event.target.value;
                             const previewElement = document.querySelector('#md-content');
