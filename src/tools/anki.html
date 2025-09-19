@@ -61,6 +61,34 @@
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/index.css">
 
+    <style>
+        .card-input {
+            width: 100%;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            font-size: 14px;
+        }
+        
+        .delete-btn {
+            background-color: #ff4444;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .delete-btn:hover {
+            background-color: #cc0000;
+        }
+        
+        .common td {
+            padding: 8px;
+        }
+    </style>
+
     <script type="module" src="../script/javascript/ui.js"></script>
     <script type="module" src="../script/javascript/header.js"></script>
     <script type="module" src="../script/javascript/util.js"></script>
@@ -109,76 +137,35 @@
         </section>
         <section id="study" class="content">
             <h2 class="slide-in">暗記カード学習</h2>
-            <label>カードをシャッフル
-                <input type="checkbox" id="shuffle-checkbox" class="slide-in">
-            </label><br>
-            <label>
-                質問と回答を入れ替える
-                <input type="checkbox" id="reverse-checkbox" class="slide-in">
-            </label><br>
+            <ul>
+                <li>
+                    <label>カードをシャッフル
+                        <input type="checkbox" id="shuffle-checkbox" class="slide-in">
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        質問と回答を入れ替える
+                        <input type="checkbox" id="reverse-checkbox" class="slide-in">
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        質問と回答をランダムに入れ替える
+                        <input type="checkbox" id="randomize-checkbox" class="slide-in">
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        大小字を区別する
+                        <input type="checkbox" id="case-sensitive-checkbox" class="slide-in">
+                    </label>
+                </li>
+            </ul>
+
             <input type="file" id="file-input" accept=".csv" class="slide-in"><br><br>
             <button id="game-start" class="next-btn">開始</button>
         </section>
-        <script>
-            const fileInput = document.getElementById('file-input');
-            const gameStartButton = document.getElementById('game-start');
-            const shuffleCheckbox = document.getElementById('shuffle-checkbox');
-            const reverseCheckbox = document.getElementById('reverse-checkbox');
-            let flashcards = [];
-            
-            fileInput.addEventListener('change', function(event) {
-                const file = event.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        const content = e.target.result;
-                        const lines = content.split('\n');
-                        flashcards = lines.slice(1).map(line => {
-                            const [question, answer] = line.split(',');
-                            return { question: question, answer: answer };
-                        }).filter(card => card.question && card.answer);
-                    };
-                    reader.readAsText(file);
-                }
-            });
-
-            gameStartButton.addEventListener('click', function() {
-                if (flashcards.length === 0) {
-                    alert('まずCSVファイルを読み込んでください。');
-                    return;
-                }
-
-                let correctCount = 0;
-                if (shuffleCheckbox.checked) {
-                    flashcards.sort(() => Math.random() - 0.5);
-                }
-                if( reverseCheckbox.checked ){
-                    flashcards = flashcards.map(card => ({
-                        question: card.answer,
-                        answer: card.question
-                    }));
-                }
-                
-                let currentCardIndex = 0;
-                const showCard = () => {
-                    const card = flashcards[currentCardIndex];
-                    const userAnswer = prompt(card.question);
-                    if (userAnswer === null) return;
-
-                    if (userAnswer.trim().toLowerCase() === card.answer.trim().toLowerCase()) {
-                        alert('正解！');
-                        correctCount++;
-                    } else {
-                        alert(`不正解。正しい答えは: ${card.answer}`);
-                    }
-                    currentCardIndex++;
-                };
-                while (currentCardIndex < flashcards.length)
-                    showCard();
-
-                alert(`学習終了！正解数: ${correctCount} / ${flashcards.length}`);
-            });
-        </script>
 
         <section id="create" class="content">
             <h2 class="slide-in">暗記カードの作成</h2>
@@ -192,6 +179,7 @@
                     <tr>
                         <th>質問</th>
                         <th>回答</th>
+                        <th>操作</th>
                     </tr>
                 </thead>
                 <tbody id="card-table-body">
@@ -214,39 +202,76 @@
                 </div>
             </form>
             <script>
+                const fileInput = document.getElementById('file-input');
+                const gameStartButton = document.getElementById('game-start');
+                const shuffleCheckbox = document.getElementById('shuffle-checkbox');
+                const reverseCheckbox = document.getElementById('reverse-checkbox');
+                let flashcards = [];
                 const form = document.getElementById('card-form');
+
+                const caseSensitiveCheckbox = document.getElementById('case-sensitive-checkbox');
+                const randomizeCheckbox = document.getElementById('randomize-checkbox');
+
+                // フラッシュカードを追加
+                function addCardToTable(question, answer) {
+                    const tableBody = document.getElementById('card-table-body');
+                    const newRow = document.createElement('tr');
+
+                    const questionCell = document.createElement('td');
+                    const questionInput = document.createElement('input');
+                    questionInput.type = 'text';
+                    questionInput.value = question;
+                    questionInput.classList.add('card-input');
+                    questionCell.appendChild(questionInput);
+                    newRow.appendChild(questionCell);
+
+                    const answerCell = document.createElement('td');
+                    const answerInput = document.createElement('input');
+                    answerInput.type = 'text';
+                    answerInput.value = answer;
+                    answerInput.classList.add('card-input');
+                    answerCell.appendChild(answerInput);
+                    newRow.appendChild(answerCell);
+
+                    const deleteCell = document.createElement('td');
+                    const deleteButton = document.createElement('button');
+                    deleteButton.textContent = '削除';
+                    deleteButton.classList.add('delete-btn');
+                    deleteButton.addEventListener('click', function() {
+                        newRow.remove();
+                    });
+                    deleteCell.appendChild(deleteButton);
+                    newRow.appendChild(deleteCell);
+
+                    tableBody.appendChild(newRow);
+                }
+
+                // フォーム送信時にカードを追加
                 form.addEventListener('submit', function(event) {
                     event.preventDefault();
 
                     const question = document.getElementById('question').value;
                     const answer = document.getElementById('answer').value;
-
-                    const tableBody = document.getElementById('card-table-body');
-                    const newRow = document.createElement('tr');
-
-                    const questionCell = document.createElement('td');
-                    questionCell.textContent = question;
-                    newRow.appendChild(questionCell);
-
-                    const answerCell = document.createElement('td');
-                    answerCell.textContent = answer;
-                    newRow.appendChild(answerCell);
-
-                    tableBody.appendChild(newRow);
+                    addCardToTable(question, answer);
 
                     form.reset();
                 });
+
+                // CSV保存
                 const downloadBtn = document.getElementById('download-btn');
+                const tableBody = document.getElementById('card-table-body');
                 downloadBtn.addEventListener('click', function() {
-                    const tableBody = document.getElementById('card-table-body');
                     const rows = tableBody.querySelectorAll('tr');
                     let csvContent = "data:text/csv;charset=utf-8,question,answer\n";
 
                     rows.forEach(row => {
-                        const cols = row.querySelectorAll('td');
-                        const question = cols[0].textContent;
-                        const answer = cols[1].textContent;
-                        csvContent += `${question},${answer}\n`;
+                        const questionInput = row.querySelector('td:first-child input');
+                        const answerInput = row.querySelector('td:nth-child(2) input');
+                        if (questionInput && answerInput) {
+                            const question = questionInput.value;
+                            const answer = answerInput.value;
+                            csvContent += `${question},${answer}\n`;
+                        }
                     });
 
                     const encodedUri = encodeURI(csvContent);
@@ -256,6 +281,102 @@
                     document.body.appendChild(link);
                     link.click();
                     document.body.removeChild(link);
+                });
+
+                // CSVファイル読み込み
+                fileInput.addEventListener('change', function(event) {
+                    const file = event.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            tableBody.innerHTML = ''; // 既存のカードをクリア
+
+                            const content = e.target.result;
+                            const lines = content.split('\n');
+                            flashcards = lines.slice(1).map(line => {
+                                const [question, answer] = line.split(',');
+
+                                if (question && answer)
+                                    addCardToTable(question, answer);
+
+                                return { question: question, answer: answer };
+                            }).filter(card => card.question && card.answer);
+                        };
+                        reader.readAsText(file);
+                    }
+                });
+
+                // 学習開始
+                gameStartButton.addEventListener('click', function() {
+                    // テーブルの内容を flashcards 配列に反映
+                    const rows = tableBody.querySelectorAll('tr');
+                    flashcards = [];
+                    rows.forEach(row => {
+                        const questionInput = row.querySelector('td:first-child input');
+                        const answerInput = row.querySelector('td:nth-child(2) input');
+                        if (questionInput && answerInput && questionInput.value.trim() && answerInput.value.trim()) {
+                            flashcards.push({
+                                question: questionInput.value.trim(),
+                                answer: answerInput.value.trim()
+                            });
+                        }
+                    });
+
+                    if (flashcards.length === 0) {
+                        alert('暗記カードを追加してください。');
+                        return;
+                    }
+
+                    let correctCount = 0;
+                    if (shuffleCheckbox.checked) {
+                        flashcards.sort(() => Math.random() - 0.5);
+                    }
+                    if (reverseCheckbox.checked) {
+                        flashcards = flashcards.map(card => ({
+                            question: card.answer,
+                            answer: card.question
+                        }));
+                    } else if (randomizeCheckbox.checked) {
+                        flashcards = flashcards.map(card => {
+                            return Math.random() < 0.5 ? {
+                                question: card.question,
+                                answer: card.answer
+                            } : {
+                                question: card.answer,
+                                answer: card.question
+                            };
+                        });
+                    }
+                    
+                    let currentCardIndex = 0;
+                    const showCard = () => {
+                        const card = flashcards[currentCardIndex];
+                        const userAnswer = prompt(card.question);
+                        if (userAnswer === null) {
+                            alert('学習を中止しました。');
+                            return false; // 中止フラグを返す
+                        }
+
+                        const userAnswerProcessed = caseSensitiveCheckbox.checked ? 
+                            userAnswer.trim() : userAnswer.trim().toLowerCase();
+                        const correctAnswerProcessed = caseSensitiveCheckbox.checked ? 
+                            card.answer.trim() : card.answer.trim().toLowerCase();
+
+                        if (userAnswerProcessed === correctAnswerProcessed) {
+                            alert('正解！');
+                            correctCount++;
+                        } else {
+                            alert(`不正解。正しい答えは: ${card.answer}`);
+                        }
+                        currentCardIndex++;
+                        return true; // 継続フラグを返す
+                    };
+                    
+                    while (currentCardIndex < flashcards.length) {
+                        if (!showCard()) break; // 中止された場合はループを抜ける
+                    }
+
+                    alert(`学習終了！正解数: ${correctCount} / ${flashcards.length}`);
                 });
             </script>
         </section>
