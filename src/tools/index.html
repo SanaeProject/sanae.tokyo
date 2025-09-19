@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+
+<!-- html Start -->
+<html lang="ja">
+<!-- head Start -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SanaeProject - 暗記カード</title>
+
+    <meta name="description"    content="SanaeProjectは自然言語処理とAI技術の学習・開発プロジェクトです。ニューラルネットワークの理解を深め、シンプルなアルゴリズムの開発に取り組んでいます。オープンソースでAI技術を身近にします。">
+    <meta name="keywords"       content="SanaeProject, AI, 自然言語処理, ニューラルネットワーク, ディープラーニング, 機械学習, オープンソース, C++, CUDA, 人工知能">
+    <meta name="author"         content="SanaeProject">
+    <meta name="robots"         content="index, follow">
+    <meta name="language"       content="ja">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type"        content="website">
+    <meta property="og:url"         content="https://sanae.tokyo/">
+    <meta property="og:title"       content="SanaeProject - AI・自然言語処理の学習と開発プロジェクト">
+    <meta property="og:description" content="SanaeProjectは自然言語処理とAI技術の学習・開発プロジェクトです。ニューラルネットワークの理解を深め、シンプルなアルゴリズムの開発に取り組んでいます。">
+    <meta property="og:image"       content="https://sanae.tokyo/picture/programming.webp">
+    <meta property="og:image:alt"   content="SanaeProject - AI・自然言語処理プロジェクト">
+    <meta property="og:site_name"   content="SanaeProject">
+    <meta property="og:locale"      content="ja_JP">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card"        content="summary_large_image">
+    <meta name="twitter:url"         content="https://sanae.tokyo/">
+    <meta name="twitter:title"       content="SanaeProject - AI・自然言語処理の学習と開発プロジェクト">
+    <meta name="twitter:description" content="SanaeProjectは自然言語処理とAI技術の学習・開発プロジェクトです。ニューラルネットワークの理解を深め、シンプルなアルゴリズムの開発に取り組んでいます。">
+    <meta name="twitter:image"       content="https://sanae.tokyo/picture/programming.webp">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://sanae.tokyo/">
+
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/index.css">
+
+    <script type="module" src="../script/javascript/ui.js"></script>
+    <script type="module" src="../script/javascript/header.js"></script>
+    <script type="module" src="../script/javascript/util.js"></script>
+
+    <script type="module">
+        import * as UI from '../script/javascript/ui.js';
+        window.delayPrint               = UI.delayPrint;
+        window.toggleVisibilityOnScroll = UI.toggleVisibilityOnScroll;
+        window.toggleStyleOnScroll      = UI.toggleStyleOnScroll;
+        window.readSelectedFileContent  = UI.readSelectedFileContent;
+        
+        import * as util from '../script/javascript/util.js';
+        window.throttle = util.throttle;
+        window.getJsonFromFetch = util.getJsonFromFetch;
+    </script>
+</head>
+<!-- head End -->
+
+<!-- body Start -->
+<body>
+    <!-- header Start -->
+    <header class="hide">
+        <label class="menu-icon">
+            <input type="checkbox" id="menu-toggle" class="menu-toggle">
+            <span class="navicon"></span>
+        </label>
+        <nav class="menu">
+            <ul>
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="../blog.html">Blog</a></li>
+                <li><a href="../terms.html">Terms</a></li>
+                <li><a href="../tools/index.html">tools</a></li>
+                <li><a href="mailto:support@sanae.tokyo">Contact</a></li>
+            </ul>
+        </nav>
+        <h1>SanaeProject - 便利ツール</h1>
+    </header>
+    <!-- header End -->
+
+    <!-- main Start -->
+    <main>
+        <section>
+            <h2 class="slide-in">便利ツール</h2>
+            <p class="slide-in">
+                以下は、SanaeProjectが提供する便利なツールの一覧です。<br>
+                ぜひ使ってやってください。
+            </p>
+            <li>
+                <a href="anki.html" class="slide-in">暗記カード</a>
+            </li>
+        </section>  
+    </main>
+    <!-- main End -->
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => { 
+            const elements = Array.from(document.querySelectorAll(".slide-in,.write")); 
+            toggleVisibilityOnScroll( elements, (entry) => {
+                if(entry.target.classList.contains("write")){
+                    delayPrint(
+                        entry.target, 
+                        entry.target.textContent, 
+                        100
+                    );
+                    entry.target.classList.remove("write");
+                    entry.target.classList.add("wrote");
+                }
+
+                if(entry.target.classList.contains("slide-in"))
+                    entry.target.classList.add("slide-in-visible");
+                }, (entry) => {}
+            ); 
+        });
+    </script>
+
+    <!-- footer Start -->
+    <footer>
+        <p>&copy; 2023 SanaeProject. All rights reserved.</p>
+    </footer>
+    <!-- footer End -->
+</body>
+<!-- body End -->
+</html>
+<!-- html End -->

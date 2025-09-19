@@ -1,5 +1,5 @@
 AuthType Basic
 AuthName "Restricted Area"
-# AuthUserFile ./.htpasswd
-AuthUserFile c:/xampp/htdocs/new.sanae.tokyo/src/auth/.htpasswd
+AuthUserFile ./.htpasswd
+#AuthUserFile c:/xampp/htdocs/new.sanae.tokyo/src/auth/.htpasswd
 Require valid-user

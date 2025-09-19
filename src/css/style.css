@@ -216,7 +216,7 @@ footer {
   height: 100px;
   padding: 1rem;
   text-align: center;
-  background: #e1e1e1;
+  background: rgb(224.5, 224.5, 224.5);
   color: #2c3e50;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
@@ -355,7 +355,7 @@ table.horizontal td {
 }
 
 .effect.slide-in {
-  background: linear-gradient(to left, whitesmoke 51%, rgba(55, 55, 55, 0.9803921569) 50%);
+  background: linear-gradient(to left, rgb(244.9, 244.9, 244.9) 51%, rgba(55, 55, 55, 0.9803921569) 50%);
   background-repeat: no-repeat;
   background-size: 200% 100%;
   background-position: left center;
@@ -401,7 +401,7 @@ table.horizontal td {
   transition: 0.3s;
 }
 .next-btn:hover {
-  background-color: #eff6ff;
+  background-color: rgb(239.1, 246, 254.5);
   color: #60a5fa;
   text-decoration: none;
   transition: all 0.3s ease-in-out;

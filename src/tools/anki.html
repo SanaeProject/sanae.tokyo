@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+
+<!-- html Start -->
+<html lang="ja">
+<!-- head Start -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SanaeProject - 暗記カード</title>
+
+    <meta name="description"    content="SanaeProjectのweb暗記カードツールです。CSVファイルから暗記カードを読み込み、シャッフルや質問・回答入れ替え機能で効率的に学習できます。カードの作成・保存も可能です。">
+    <meta name="keywords"       content="SanaeProject, 暗記カード, フラッシュカード, web学習ツール, CSV, 学習支援, 記憶学習, オンライン暗記, 勉強ツール">
+    <meta name="author"         content="SanaeProject">
+    <meta name="robots"         content="index, follow">
+    <meta name="language"       content="ja">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type"        content="website">
+    <meta property="og:url"         content="https://new.sanae.tokyo/tools/anki.html">
+    <meta property="og:title"       content="SanaeProject - web暗記カード">
+    <meta property="og:description" content="CSVファイルから暗記カードを読み込み、シャッフルや質問・回答入れ替え機能で効率的に学習できるwebツールです。カードの作成・保存も可能です。">
+    <meta property="og:image"       content="https://new.sanae.tokyo/picture/programming.webp">
+    <meta property="og:image:alt"   content="SanaeProject - web暗記カード学習ツール">
+    <meta property="og:site_name"   content="SanaeProject">
+    <meta property="og:locale"      content="ja_JP">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card"        content="summary_large_image">
+    <meta name="twitter:url"         content="https://new.sanae.tokyo/tools/anki.html">
+    <meta name="twitter:title"       content="SanaeProject - web暗記カード">
+    <meta name="twitter:description" content="CSVファイルから暗記カードを読み込み、シャッフルや質問・回答入れ替え機能で効率的に学習できるwebツールです。カードの作成・保存も可能です。">
+    <meta name="twitter:image"       content="https://new.sanae.tokyo/picture/programming.webp">
+    <meta name="twitter:image:alt"   content="SanaeProject - web暗記カード学習ツール">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://new.sanae.tokyo/tools/anki.html">
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "SanaeProject - web暗記カード",
+        "description": "CSVファイルから暗記カードを読み込み、シャッフルや質問・回答入れ替え機能で効率的に学習できるwebツールです。カードの作成・保存も可能です。",
+        "url": "https://new.sanae.tokyo/tools/anki.html",
+        "applicationCategory": "EducationalApplication",
+        "operatingSystem": "Web Browser",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "JPY"
+        },
+        "publisher": {
+            "@type": "Organization",
+            "name": "SanaeProject",
+            "url": "https://new.sanae.tokyo"
+        }
+    }
+    </script>
+
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/index.css">
+
+    <script type="module" src="../script/javascript/ui.js"></script>
+    <script type="module" src="../script/javascript/header.js"></script>
+    <script type="module" src="../script/javascript/util.js"></script>
+
+    <script type="module">
+        import * as UI from '../script/javascript/ui.js';
+        window.delayPrint               = UI.delayPrint;
+        window.toggleVisibilityOnScroll = UI.toggleVisibilityOnScroll;
+        window.toggleStyleOnScroll      = UI.toggleStyleOnScroll;
+        window.readSelectedFileContent  = UI.readSelectedFileContent;
+        
+        import * as util from '../script/javascript/util.js';
+        window.throttle = util.throttle;
+        window.getJsonFromFetch = util.getJsonFromFetch;
+    </script>
+</head>
+<!-- head End -->
+
+<!-- body Start -->
+<body>
+    <!-- header Start -->
+    <header class="hide">
+        <label class="menu-icon">
+            <input type="checkbox" id="menu-toggle" class="menu-toggle">
+            <span class="navicon"></span>
+        </label>
+        <nav class="menu">
+            <ul>
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="../blog.html">Blog</a></li>
+                <li><a href="../terms.html">Terms</a></li>
+                <li><a href="mailto:support@sanae.tokyo">Contact</a></li>
+            </ul>
+        </nav>
+        <h1>web flash card</h1>
+    </header>
+    <!-- header End -->
+
+    <!-- main Start -->
+    <main>
+        <section class="content">
+            <h2 class="slide-in">暗記カード</h2>
+            <p class="slide-in">
+                このページでは、暗記カードをweb上で作成、保存、学習することが出来ます。
+            </p>
+        </section>
+        <section id="study" class="content">
+            <h2 class="slide-in">暗記カード学習</h2>
+            <label>カードをシャッフル
+                <input type="checkbox" id="shuffle-checkbox" class="slide-in">
+            </label><br>
+            <label>
+                質問と回答を入れ替える
+                <input type="checkbox" id="reverse-checkbox" class="slide-in">
+            </label><br>
+            <input type="file" id="file-input" accept=".csv" class="slide-in"><br><br>
+            <button id="game-start" class="next-btn">開始</button>
+        </section>
+        <script>
+            const fileInput = document.getElementById('file-input');
+            const gameStartButton = document.getElementById('game-start');
+            const shuffleCheckbox = document.getElementById('shuffle-checkbox');
+            const reverseCheckbox = document.getElementById('reverse-checkbox');
+            let flashcards = [];
+            
+            fileInput.addEventListener('change', function(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const content = e.target.result;
+                        const lines = content.split('\n');
+                        flashcards = lines.slice(1).map(line => {
+                            const [question, answer] = line.split(',');
+                            return { question: question, answer: answer };
+                        }).filter(card => card.question && card.answer);
+                    };
+                    reader.readAsText(file);
+                }
+            });
+
+            gameStartButton.addEventListener('click', function() {
+                if (flashcards.length === 0) {
+                    alert('まずCSVファイルを読み込んでください。');
+                    return;
+                }
+
+                let correctCount = 0;
+                if (shuffleCheckbox.checked) {
+                    flashcards.sort(() => Math.random() - 0.5);
+                }
+                if( reverseCheckbox.checked ){
+                    flashcards = flashcards.map(card => ({
+                        question: card.answer,
+                        answer: card.question
+                    }));
+                }
+                
+                let currentCardIndex = 0;
+                const showCard = () => {
+                    const card = flashcards[currentCardIndex];
+                    const userAnswer = prompt(card.question);
+                    if (userAnswer === null) return;
+
+                    if (userAnswer.trim().toLowerCase() === card.answer.trim().toLowerCase()) {
+                        alert('正解！');
+                        correctCount++;
+                    } else {
+                        alert(`不正解。正しい答えは: ${card.answer}`);
+                    }
+                    currentCardIndex++;
+                };
+                while (currentCardIndex < flashcards.length)
+                    showCard();
+
+                alert(`学習終了！正解数: ${correctCount} / ${flashcards.length}`);
+            });
+        </script>
+
+        <section id="create" class="content">
+            <h2 class="slide-in">暗記カードの作成</h2>
+            <p class="slide-in">
+                暗記カードを作成するには、以下のフォームに質問と回答を入力し、「追加」ボタンをクリックしてください。
+            </p>
+
+            <!-- 追加したカードを表示 -->
+            <table class="common">
+                <thead>
+                    <tr>
+                        <th>質問</th>
+                        <th>回答</th>
+                    </tr>
+                </thead>
+                <tbody id="card-table-body">
+                </tbody>
+            </table>
+
+            <!-- カード追加フォーム -->
+            <form id="card-form" class="slide-in">
+                <div>
+                    <label for="question">質問:</label>
+                    <input type="text" id="question" name="question" required>
+                </div>
+                <div>
+                    <label for="answer">回答:</label>
+                    <input type="text" id="answer" name="answer" required>
+                </div>
+                <div>
+                    <button type="submit" class="next-btn">追加</button>
+                    <button id="download-btn">保存</button>
+                </div>
+            </form>
+            <script>
+                const form = document.getElementById('card-form');
+                form.addEventListener('submit', function(event) {
+                    event.preventDefault();
+
+                    const question = document.getElementById('question').value;
+                    const answer = document.getElementById('answer').value;
+
+                    const tableBody = document.getElementById('card-table-body');
+                    const newRow = document.createElement('tr');
+
+                    const questionCell = document.createElement('td');
+                    questionCell.textContent = question;
+                    newRow.appendChild(questionCell);
+
+                    const answerCell = document.createElement('td');
+                    answerCell.textContent = answer;
+                    newRow.appendChild(answerCell);
+
+                    tableBody.appendChild(newRow);
+
+                    form.reset();
+                });
+                const downloadBtn = document.getElementById('download-btn');
+                downloadBtn.addEventListener('click', function() {
+                    const tableBody = document.getElementById('card-table-body');
+                    const rows = tableBody.querySelectorAll('tr');
+                    let csvContent = "data:text/csv;charset=utf-8,question,answer\n";
+
+                    rows.forEach(row => {
+                        const cols = row.querySelectorAll('td');
+                        const question = cols[0].textContent;
+                        const answer = cols[1].textContent;
+                        csvContent += `${question},${answer}\n`;
+                    });
+
+                    const encodedUri = encodeURI(csvContent);
+                    const link = document.createElement('a');
+                    link.setAttribute('href', encodedUri);
+                    link.setAttribute('download', 'flashcards.csv');
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                });
+            </script>
+        </section>
+        
+    </main>
+    <!-- main End -->
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => { 
+            const elements = Array.from(document.querySelectorAll(".slide-in,.write")); 
+            toggleVisibilityOnScroll( elements, (entry) => {
+                if(entry.target.classList.contains("write")){
+                    delayPrint(
+                        entry.target, 
+                        entry.target.textContent, 
+                        100
+                    );
+                    entry.target.classList.remove("write");
+                    entry.target.classList.add("wrote");
+                }
+
+                if(entry.target.classList.contains("slide-in"))
+                    entry.target.classList.add("slide-in-visible");
+                }, (entry) => {}
+            ); 
+        });
+    </script>
+
+    <!-- footer Start -->
+    <footer>
+        <p>&copy; 2023 SanaeProject. All rights reserved.</p>
+    </footer>
+    <!-- footer End -->
+</body>
+<!-- body End -->
+</html>
+<!-- html End -->

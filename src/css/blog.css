@@ -208,7 +208,7 @@ header.hide .menu {
   transition: all 0.3s ease-in-out;
 }
 .sidebar-toggle:hover {
-  background-color: rgba(30, 30, 30, 0.9803921569);
+  background-color: rgba(29.5, 29.5, 29.5, 0.9803921569);
 }
 .sidebar-toggle.sidebar-open {
   left: calc(50vw - 20px);
@@ -255,7 +255,7 @@ header.hide .menu {
   transition: background-color 0.2s ease;
 }
 .pagination-btn:hover:not(.disabled) {
-  background-color: rgba(30, 30, 30, 0.9803921569);
+  background-color: rgba(29.5, 29.5, 29.5, 0.9803921569);
 }
 .pagination-btn.disabled {
   background-color: #9ca3af;
@@ -288,7 +288,7 @@ header.hide .menu {
   margin-left: 0.5rem;
 }
 .search-button:hover {
-  background-color: rgba(30, 30, 30, 0.9803921569);
+  background-color: rgba(29.5, 29.5, 29.5, 0.9803921569);
 }
 
 .delete {
@@ -308,7 +308,7 @@ header.hide .menu {
 }
 
 .delete:hover {
-  background-color: #f64040;
+  background-color: rgb(245.6040268456, 64.3959731544, 64.3959731544);
   background-position: center -2px;
 }
 
