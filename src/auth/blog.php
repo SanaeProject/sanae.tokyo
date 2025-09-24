@@ -145,8 +145,17 @@ if (!isset($_SESSION['csrf_token'])) {
         <?php endif; ?>
         
         <section class="slide-in">
-            <div class="title-wrapper">
+            <div class="title-wrapper" style="display: flex; align-items: center; gap: 10px;">
                 <h2>Blog</h2>
+
+                <?php if(isset($_GET['id'])): ?>
+                <!-- ブログ削除フォーム -->
+                <form action="./del-blog.php" method="post">
+                    <input type="hidden" name="id" value="<?php echo isset($_GET['id']) ? htmlspecialchars($_GET['id']) : ''; ?>">
+                    <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
+                    <button class="delete" type="submit" onclick="return prompt('ブログを削除しますか？削除する場合は「delete」と入力してください。') === 'delete'"></button>
+                </form>
+                <?php endif; ?>
             </div>
             <div class="content-wrapper">
                 <div class="editor-wrapper">

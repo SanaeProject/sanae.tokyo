@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+
+<!-- 
+ * Copyright  2024 SanaeProject
+-->
+
+<!-- html Start -->
+<html lang="ja">
+    <!-- head Start -->
+    <head>
+        <meta charset="UTF-8">
+
+        <!-- Author -->
+        <meta name = "author"   content = "SanaeProject">
+        <!-- Viewport -->
+        <meta name = "viewport" content = "width=device-width,initial-scale=1">
+
+        <!-- Title -->
+        <title>SanaeProject - 将棋サイト</title>
+
+        <!-- import javascript -->
+        <script src="scripts/js/sanaeUI.js"></script>
+        
+        <script type="module" src="scripts/js/piece.js"></script>
+        <script type="module" src="scripts/js/board.js"></script>
+        <script type ="module" src="scripts/js/shogiUI.js"></script>
+
+        <link rel="stylesheet" href="../../css/style.css">
+        <link rel="stylesheet" href="css/shogi.css">
+    </head>
+    <!-- head End -->
+
+    <!-- body Start -->
+    <body>
+        <!-- header Start -->
+        <header>
+            <label class="menu-icon">
+                <input type="checkbox" id="menu-toggle" class="menu-toggle">
+                <span class="navicon"></span>
+            </label>
+            <nav class="menu">
+                <ul>
+                    <li><a href="../../index.html">Home</a></li>
+                    <li><a href="../../blog.html">Blog</a></li>
+                    <li><a href="../../terms.html">Terms</a></li>
+                    <li><a href="../../tools/index.html">Tools</a></li>
+                    <li><a href="mailto:support@sanae.tokyo">Contact</a></li>
+                </ul>
+            </nav>
+            <h1>Shogi</h1>
+        </header>
+        <!-- header End -->
+
+
+        <!-- main Start -->
+        <main>
+            <section>
+                <div class="section-wrapper">
+                    <!-- 持ち駒 後手 -->
+                    <div class="content-wrapper"> 
+                        <table>    
+                            <tbody id="goteBoard">
+                                <tr>
+                                    <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                                </tr>
+                                <tr>
+                                    <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                                </tr>
+                            </tbody>
+
+                            <tfoot>
+                                <tr>
+                                    <th scope="col" style="transform:rotate(180deg);" colspan="10">持ち駒(後手)</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+
+                    <!-- ボード -->
+                    <div class="content-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th scope="col">行/列</th><th scope="col">1</th><th scope="col">2</th><th scope="col">3</th><th scope="col">4</th><th scope="col">5</th><th scope="col">6</th><th scope="col">7</th><th scope="col">8</th><th scope="col">9</th>
+                                </tr>
+                            </thead>
+                            <tbody id="shogiBoard">     
+                                <tr>
+                                    <th scope="row">一</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">二</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">三</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">四</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">五</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">六</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">七</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">八</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">九</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- 持ち駒 先手 -->
+                    <div class="content-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th scope="col" colspan="10">持ち駒(先手)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="senteBoard">
+                                <tr>
+                                    <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                                </tr>
+                                <tr>
+                                    <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+            <!-- comment section end -->
+        </main>
+        <!-- main End -->
+
+        <script>
+            document.addEventListener("DOMContentLoaded", () => { 
+                const elements = Array.from(document.querySelectorAll(".slide-in,.write")); 
+                toggleVisibilityOnScroll( elements, (entry) => {
+                    if(entry.target.classList.contains("write")){
+                        delayPrint(
+                            entry.target, 
+                            entry.target.textContent, 
+                            100
+                        );
+                        entry.target.classList.remove("write");
+                        entry.target.classList.add("wrote");
+                    }
+
+                    if(entry.target.classList.contains("slide-in"))
+                        entry.target.classList.add("slide-in-visible");
+                    }, (entry) => {}
+                ); 
+            });
+        </script>
+
+        <!-- footer Start -->
+        <footer>
+            <p>SourceCode:<a href="https://github.com/SanaePRJ/shogiTS">GitHub</a></p>
+            <p>&copy; 2024 SanaeProject.</p>
+        </footer>
+        <!-- footer End -->
+
+    </body>
+    <!-- body End -->
+
+</html>
+<!-- html End -->

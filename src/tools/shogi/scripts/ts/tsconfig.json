@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    /* Language and Environment */
+    "target": "ES2017" /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */,
+    "lib": [
+      "dom",
+      "ES2017"
+    ] /* Specify a set of bundled library declaration files that describe the target runtime environment. */,
+    "strict": true /* Enable all strict type-checking options. */,
+    "esModuleInterop": true /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. */,
+    /* Modules */
+    "module": "ES2020" /* Specify what module code is generated. */,
+    /* Emit */
+    "sourceMap": true /* Create source map files for emitted JavaScript files. */,
+    "outDir": "../js/" /* Specify an output folder for all emitted files. */,
+    "removeComments": false /* Disable emitting comments. */,
+  },
+  "include": [
+    "./*", // あなたのソースファイルのパス
+    "globals.d.ts" // グローバル宣言ファイルを含める
+  ]
+}
